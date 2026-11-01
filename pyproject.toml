@@ -6,8 +6,13 @@ authors = [
     {name = "ruslan",email = "ruslanpetryakov@yandex.ru"}
 ]
 readme = "README.md"
-requires-python = "^3.14"
+requires-python = "^3.13"
 dependencies = [
+    "django (>=6.1.2,<7.0.0)",
+    "psycopg2-binary (>=2.9.13,<3.0.0)",
+    "pillow (>=13.0.0,<14.0.0)",
+    "djangorestframework (>=3.18.3,<4.0.0)",
+    "load-dotenv (>=0.1.0,<0.2.0)",
 ]
 
 
