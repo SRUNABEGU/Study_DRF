@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from lms.serializers import CourseSerializer, LessonSerializer
 from .models import User, Payment
 
 
@@ -16,3 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'city', 'avatar', 'payments']
+
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'phone', 'city', 'avatar']
