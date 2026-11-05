@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from . import serializers
 from .filters import PaymentFilter
 from .models import User, Payment
 from .permissions import IsProfileOwner
@@ -25,8 +26,14 @@ class PaymentListAPIView(generics.ListAPIView):
     ordering = ['-paid_at']
 
 
-class UserRegisterSerializer:
-    pass
+class UserRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email" "password"]
+
+    def create(self, validated_data):
+        return User.objects.create_user( ** validated_data)
+
 
 
 class UserRegisterAPIView(generics.CreateAPIView):
@@ -38,10 +45,6 @@ class UserRegisterAPIView(generics.CreateAPIView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
