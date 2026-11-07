@@ -1,11 +1,17 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics
-from .models import Course, Lesson
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import Course, Lesson, Subscription
+from .paginators import LmsPagination
 from .serializers import CourseSerializer, LessonSerializer
 from rest_framework.permissions import IsAuthenticated
 from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    pagination_class = LmsPagination
     serializer_class = CourseSerializer
 
     def get_queryset(self):
@@ -36,6 +42,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonListAPIView(generics.ListAPIView):
+    pagination_class = LmsPagination
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated]
 
@@ -61,3 +68,20 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, ~IsModer, IsOwner]
+
+
+class SubscriptionAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        course = get_object_or_404(Course, pk=request.data.get('course_id'))
+        subs = Subscription.objects.filter(user=request.user, course=course)
+
+        if subs.exists():
+            subs.delete()
+            message = 'подписка удалена'
+        else:
+            Subscription.objects.create(user=request.user, course=course)
+            message = 'подписка добавлена'
+
+        return Response({'message': message})
