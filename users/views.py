@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from lms.serializers import UserRegisterSerializer
 from . import serializers
 from .filters import PaymentFilter
 from .models import User, Payment
@@ -24,16 +25,6 @@ class PaymentListAPIView(generics.ListAPIView):
     filterset_class = PaymentFilter
     ordering_fields = ['paid_at']
     ordering = ['-paid_at']
-
-
-class UserRegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["email" "password"]
-
-    def create(self, validated_data):
-        return User.objects.create_user( ** validated_data)
-
 
 
 class UserRegisterAPIView(generics.CreateAPIView):
