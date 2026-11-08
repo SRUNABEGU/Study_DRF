@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from users.models import User
@@ -24,18 +26,22 @@ class CourseSerializer(serializers.ModelSerializer):
                   'lessons_count', 'lessons', 'is_subscribed']
         read_only_fields = ['owner']
 
+    @extend_schema_field(OpenApiTypes.INT)
     def get_lessons_count(self, obj):
         return obj.lessons.count()
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
         return obj.subscriptions.filter(user=user).exists()
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+
     class Meta:
         model = User
-        fields = ["email" "password"]
+        fields = ['id', 'email', 'password', 'first_name', 'last_name', 'phone', 'city', 'avatar']
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)

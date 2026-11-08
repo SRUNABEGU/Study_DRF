@@ -21,3 +21,10 @@ class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'phone', 'city', 'avatar']
+
+
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['id', 'course', 'amount', 'payment_link', 'status']
+        read_only_fields = ['amount', 'payment_link', 'status']
