@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, generics
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import viewsets, generics, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,6 +16,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Course.objects.none()
         if self.request.user.groups.filter(name='moders').exists():
             return Course.objects.all()
         return Course.objects.filter(owner=self.request.user)
@@ -73,6 +76,17 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class SubscriptionAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary='Включить/выключить подписку на курс',
+        request=inline_serializer(
+            name='SubscriptionRequest',
+            fields={'course_id': serializers.IntegerField()},
+        ),
+        responses={200: inline_serializer(
+            name='SubscriptionResponse',
+            fields={'message': serializers.CharField()},
+        )},
+    )
     def post(self, request, *args, **kwargs):
         course = get_object_or_404(Course, pk=request.data.get('course_id'))
         subs = Subscription.objects.filter(user=request.user, course=course)
