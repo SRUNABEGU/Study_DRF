@@ -8,7 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = "^3.13"
 dependencies = [
-    "django (>=6.1.2,<7.0.0)",
+    "django (>=6.0,<6.1)",
     "psycopg2-binary (>=2.9.13,<3.0.0)",
     "pillow (>=13.0.0,<14.0.0)",
     "djangorestframework (>=3.18.3,<4.0.0)",
@@ -18,6 +18,13 @@ dependencies = [
     "drf-spectacular (>=0.30.0,<0.31.0)",
     "stripe (>=16.1.0,<17.0.0)",
     "python-dotenv (>=1.2.4,<2.0.0)",
+    "celery (==5.4.0)",
+    "redis (==5.2.1)",
+    "eventlet (>=0.41.3,<0.42.0)",
+    "django-celery-beat (>=2.9.0,<3.0.0)",
+    "packaging (>=26.3,<27.0)",
+    "kombu (==5.4.2)",
+    "psycopg[binary] (>=3.3.8,<4.0.0)",
 ]
 
 
