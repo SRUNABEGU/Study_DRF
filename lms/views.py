@@ -46,11 +46,11 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, ~IsModer]
 
     def perform_create(self, serializer):
-        lesson = serializer.save(owner=self.request.user)
-        notify_course_update(lesson.course)
-
-    def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        notify_course_update(course)
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -80,12 +80,6 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, IsModer | IsOwner]
-
-
-class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
