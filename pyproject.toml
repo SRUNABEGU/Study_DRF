@@ -24,6 +24,7 @@ dependencies = [
     "django-celery-beat (>=2.9.0,<3.0.0)",
     "packaging (>=26.3,<27.0)",
     "kombu (==5.4.2)",
+    "psycopg[binary] (>=3.3.8,<4.0.0)",
 ]
 
 
