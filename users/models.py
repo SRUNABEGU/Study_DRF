@@ -1,5 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
+
+from lms.models import Course, Lesson
 
 
 class UserManager(BaseUserManager):
@@ -36,3 +39,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Payment(models.Model):
+    class Method(models.TextChoices):
+        CASH = 'cash', 'Наличные'
+        TRANSFER = 'transfer', 'Перевод на счет'
+        CARD = 'card', 'Карта (Stripe)'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='payments', verbose_name='Пользователь')
+    paid_at = models.DateTimeField(default=timezone.now, verbose_name='Дата оплаты')
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL,
+                               null=True, blank=True, verbose_name='Оплаченный курс')
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL,
+                               null=True, blank=True, verbose_name='Оплаченный урок')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма')
+    method = models.CharField(max_length=10, choices=Method.choices, verbose_name='Способ оплаты')
+
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    payment_link = models.URLField(max_length=1000, blank=True, null=True)
+    status = models.CharField(max_length=20, default='unpaid')
+
+    def __str__(self):
+        return f'{self.user} — {self.amount} ({self.paid_at:%d.%m.%Y})'
