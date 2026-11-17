@@ -19,6 +19,7 @@ class Course(models.Model):
     class Meta:
         ordering = ['id']
 
+
 class Lesson(models.Model):
     title = models.CharField(max_length=200, verbose_name='Название')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
