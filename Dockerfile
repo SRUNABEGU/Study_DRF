@@ -6,9 +6,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN pip install poetry
+RUN pip install --no-cache-dir poetry
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root --no-interaction
+RUN poetry install --no-root --without dev --no-interaction
 
 COPY . .
+
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
